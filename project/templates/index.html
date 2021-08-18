@@ -43,7 +43,7 @@
         <li class="entry">
           <h2 id="{{ entry.id }}">{{ entry.title }}</h2>
           {{ entry.text|safe }}
-          <span class="delete" id="{{ entry.id }}">[delete]</span>
+          <span class="delete-entry" id="{{ entry.id }}">[delete]</span>
         </li>
         {% else %}
         <li><em>No entries yet. Add some!</em></li>

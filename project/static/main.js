@@ -2,7 +2,7 @@
   console.log("ready!"); // sanity check
 })();
 
-const deleteElements = document.getElementsByClassName("delete");
+const deleteElements = document.getElementsByClassName("delete-entry");
 
 for (var i = 0; i < deleteElements.length; i++) {
   deleteElements[i].addEventListener("click", function () {
