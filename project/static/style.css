@@ -45,6 +45,11 @@ h2 {
     margin-left: -1em;
 }
 
+.delete {
+    color: #c03232;
+    float: right !important;
+}
+
 .add-entry {
     font-size: 0.9em;
     border-bottom: 1px solid #ccc;
@@ -52,6 +57,11 @@ h2 {
 
 .add-entry dl {
     font-weight: bold;
+}
+
+.delete {
+    color: #c03232;
+    float: right !important;
 }
 
 .metanav {
