@@ -1,7 +1,7 @@
 *.pyc
 *.DS_Store
 __pycache__
-*.db
+test.db
 .vscode
 *.egg-info
 dist/
