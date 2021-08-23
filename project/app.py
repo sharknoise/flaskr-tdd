@@ -15,7 +15,11 @@ DATABASE = "flaskr.db"
 USERNAME = getenv('ADMIN_USERNAME')
 PASSWORD = getenv('ADMIN_PASSWORD')
 SECRET_KEY = getenv('SECRET_KEY')
-SQLALCHEMY_DATABASE_URI = f'sqlite:///{Path(basedir).joinpath(DATABASE)}'
+# use sqlite when no env value is provided
+SQLALCHEMY_DATABASE_URI = getenv(
+    'DATABASE_URL',
+    f'sqlite:///{Path(basedir).joinpath(DATABASE)}'
+).replace("postgres://", "postgresql://", 1)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
