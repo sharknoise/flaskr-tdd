@@ -56,8 +56,8 @@
 
       <br /><br />
 
-      {% for message in get_flashed_messages() %}
-      <div class="flash alert alert-success col-sm-4" role="success">
+      {% for category, message in get_flashed_messages(with_categories=true) %}
+      <div class="flash alert alert-{{ category }} col-sm-4" role="{{ category }}">
         {{ message }}
       </div>
       {% endfor %}

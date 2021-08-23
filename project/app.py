@@ -1,3 +1,4 @@
+from functools import wraps
 from os import getenv
 from pathlib import Path
 
@@ -5,7 +6,6 @@ from dotenv import load_dotenv
 from flask import (Flask, abort, flash, jsonify, redirect, render_template,
                    request, session, url_for)
 from flask_sqlalchemy import SQLAlchemy
-
 
 basedir = Path(__file__).resolve().parent
 load_dotenv()
@@ -44,7 +44,7 @@ def add_entry():
     new_entry = models.Post(request.form['title'], request.form['text'])
     db.session.add(new_entry)
     db.session.commit()
-    flash('New entry was successfully posted')
+    flash('New entry was successfully posted', 'success')
     return redirect(url_for('index'))
 
 
@@ -59,7 +59,7 @@ def login():
             error = 'Invalid password'
         else:
             session['logged_in'] = True
-            flash('You were logged in')
+            flash('You were logged in.', 'success')
             return redirect(url_for('index'))
     return render_template('login.html', error=error)
 
@@ -68,19 +68,31 @@ def login():
 def logout():
     """User logout/authentication/session management."""
     session.pop('logged_in', None)
-    flash('You were logged out')
+    flash('You were logged out.', 'success')
     return redirect(url_for('index'))
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in'):
+            flash('This option is user-only, please log in.', 'danger')
+            return jsonify({'status': 0, 'message': 'Please log in.'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/delete/<int:post_id>', methods=['GET'])
+@login_required
 def delete_entry(post_id):
     """Deletes post from database."""
     result = {'status': 0, 'message': 'Error'}
     try:
-        db.session.query(models.Post).filter_by(id=post_id).delete()
+        new_id = post_id
+        db.session.query(models.Post).filter_by(id=new_id).delete()
         db.session.commit()
         result = {'status': 1, 'message': "Post Deleted"}
-        flash('The entry was deleted.')
+        flash('The entry was deleted.', 'success')
     except Exception as e:
         result = {'status': 0, 'message': repr(e)}
     return jsonify(result)
