@@ -1,42 +1,21 @@
 {% extends "base.html" %}
-{% set active_page = "index" %}
+{% set active_page = "search" %}
 {% block content %}
-{% if session.logged_in %}
-      <form
-        action="{{ url_for('add_entry') }}"
-        method="post"
-        class="add-entry form-group"
-      >
+
+      <form action="{{ url_for('search') }}" method="get" class="from-group">
         <dl>
-          <dt>Title:</dt>
+          <dt>Search:</dt>
           <dd>
-            <input
-              type="text"
-              size="30"
-              name="title"
-              class="form-control col-sm-4"
-            />
+            <input type="text" name="query" class="form-control col-sm-4" />
           </dd>
-          <dt>Text:</dt>
-          <dd>
-            <textarea
-              name="text"
-              rows="5"
-              cols="40"
-              class="form-control col-sm-4"
-            ></textarea>
-          </dd>
-          <dd>
-            <input type="submit" class="btn btn-primary" value="Post" />
-          </dd>
+          <br />
+          <dd><input type="submit" class="btn btn-primary" value="Search" /></dd>
         </dl>
       </form>
-      {% endif %}
-
-      <br />
 
       <ul class="entries">
-        {% for entry in entries %}
+        {% for entry in entries %} {% if query.lower() in entry.title.lower() or
+        query.lower() in entry.text.lower() %}
         <li class="entry">
           <h2 id="{{ entry.id }}">
             {{ entry.title }}
@@ -44,8 +23,7 @@
           </h2>
           {{ entry.text|safe }}
         </li>
-        {% else %}
-        <li><em>No entries yet. Add some!</em></li>
-        {% endfor %}
+        {% endif %} {% endfor %}
       </ul>
+
 {% endblock %}

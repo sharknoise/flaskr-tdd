@@ -83,3 +83,24 @@ def test_delete_message(client):
     rv = client.get('/delete/1')
     data = json.loads(rv.data)
     assert data["status"] == 1
+
+
+def test_search(client):
+    """Ensure that the search shows expected entries."""
+    rv = login(client, app.config["USERNAME"], app.config["PASSWORD"])
+    rv = client.post(
+        "/add",
+        data=dict(title="Good title 1", text="Text 1"),
+    )
+    rv = client.post(
+        "/add",
+        data=dict(title="Title 2", text="Good text 2"),
+    )
+    rv = client.post(
+        "/add",
+        data=dict(title="Bad title", text="Bad text"),
+    )
+    rv = client.get("/search/?query=good")
+    assert b"Good title 1" in rv.data
+    assert b"Good text 2" in rv.data
+    assert b"Bad title" not in rv.data
