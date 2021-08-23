@@ -23,7 +23,7 @@ def client():
 
 
 def login(client, username, password):
-    """Login helper function"""
+    """Log in (helper function)."""
     return client.post(
         "/login",
         data=dict(username=username, password=password),
@@ -32,29 +32,30 @@ def login(client, username, password):
 
 
 def logout(client):
-    """Logout helper function"""
+    """Log out (helper function)."""
     return client.get("/logout", follow_redirects=True)
 
 
 def test_index(client):
+    """Ensure the homepage response is OK."""
     response = client.get("/", content_type="html/text")
     assert response.status_code == 200
 
 
-def test_database(client):
-    """Initial test. Ensure that the database exists"""
-    tester = Path("test.db").is_file()
+def test_database():
+    """Ensure that the test database exists."""
+    tester = Path(TEST_DB).is_file()
     assert tester
 
 
 def test_empty_db(client):
-    """Ensure database is blank"""
+    """Ensure the database is blank."""
     rv = client.get("/")
     assert b"No entries yet. Add some!" in rv.data
 
 
 def test_login_logout(client):
-    """Test login and logout using helper functions"""
+    """Test login and logout using helper functions."""
     rv = login(client, app.config["USERNAME"], app.config["PASSWORD"])
     assert b"You were logged in" in rv.data
     rv = logout(client)
@@ -66,7 +67,7 @@ def test_login_logout(client):
 
 
 def test_messages(client):
-    """Ensure that user can post messages"""
+    """Ensure that user can post messages."""
     login(client, app.config["USERNAME"], app.config["PASSWORD"])
     rv = client.post(
         "/add",
@@ -79,7 +80,7 @@ def test_messages(client):
 
 
 def test_delete_message(client):
-    """Ensure the messages are being deleted"""
+    """Ensure the messages are being deleted."""
     rv = client.get("/delete/1")
     data = json.loads(rv.data)
     assert data["status"] == 0

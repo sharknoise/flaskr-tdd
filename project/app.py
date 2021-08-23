@@ -35,14 +35,14 @@ from project import models  # noqa: E402
 
 @app.route('/')
 def index():
-    """Searches the database for entries, displays them in reverse order."""
+    """Search the database for entries, display them in reverse order."""
     entries = db.session.query(models.Post).order_by(models.Post.id.desc())
     return render_template('index.html', entries=entries)
 
 
 @app.route('/add', methods=['POST'])
 def add_entry():
-    """Adds new post to the database."""
+    """Add a new post to the database."""
     if not session.get('logged_in'):
         abort(401)
     new_entry = models.Post(request.form['title'], request.form['text'])
@@ -54,7 +54,7 @@ def add_entry():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """User login/authentication/session management."""
+    """Manage user login/authentication/session."""
     error = None
     if request.method == 'POST':
         if request.form['username'] != app.config['USERNAME']:
@@ -70,17 +70,18 @@ def login():
 
 @app.route('/logout')
 def logout():
-    """User logout/authentication/session management."""
+    """Manage user logout/authentication/session."""
     session.pop('logged_in', None)
     flash('You were logged out.', 'success')
     return redirect(url_for('index'))
 
 
 def login_required(f):
+    """Decorate a route function to check if the user is logged in."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get('logged_in'):
-            flash('This option is user-only, please log in.', 'danger')
+            flash('Action unavailable for guests, please log in.', 'danger')
             return jsonify({'status': 0, 'message': 'Please log in.'}), 401
         return f(*args, **kwargs)
     return decorated_function
@@ -89,7 +90,7 @@ def login_required(f):
 @app.route('/delete/<int:post_id>', methods=['GET'])
 @login_required
 def delete_entry(post_id):
-    """Deletes post from database."""
+    """Delete an entry from the database."""
     result = {'status': 0, 'message': 'Error'}
     try:
         new_id = post_id
@@ -104,6 +105,7 @@ def delete_entry(post_id):
 
 @app.route('/search/', methods=['GET'])
 def search():
+    """Search for entries in the database."""
     query = request.args.get("query")
     entries = db.session.query(models.Post)
     if query:
